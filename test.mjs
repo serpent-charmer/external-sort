@@ -6,7 +6,7 @@ import { sortLargeFile } from "./merge.mjs";
 test('sorting large file test', (t) => {
     const TEST_FILE = "./tests/20230730120749_7701.csv";
 
-    sortLargeFile(TEST_FILE); 
+    sortLargeFile(TEST_FILE, 5); 
 
     let lines = fs.readFileSync("./sorted.txt").toString().split("\n");
 

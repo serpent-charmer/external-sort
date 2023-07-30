@@ -32,6 +32,9 @@ function getChunks(to_sort, chunkSize) {
 }
 
 function sortLargeFile(file_path, chunk_size) {
+    fs.rmSync("./chunks", {recursive: true, force: true});
+    fs.mkdirSync("./chunks");
+
     let chunks = getChunks(file_path, chunk_size);
     fs.writeFileSync("./sorted.txt", "");
 
