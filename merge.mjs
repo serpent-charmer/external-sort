@@ -14,12 +14,13 @@ function getChunks(to_sort, chunkSize) {
 
     let rs;
     while(rs = liner.next()) {
+        let v = rs.toString().trim();
         if(lines.length < chunkSize) {
-            lines.push(rs.toString());
+            lines.push(v);
         } else {
             writeChunk(++chunkCounter, lines);
             chunks.push({value: lines[0], chunk: chunkCounter});
-            lines = [rs.toString()];
+            lines = [v];
         }
     }   
 
@@ -50,7 +51,7 @@ function sortLargeFile(file_path, chunk_size) {
         let exhausted = true;
 
         while(val = reader.next()) {
-            let v = val.toString();
+            let v = val.toString().trim();
             if(v <= next.value) {
                 fs.appendFileSync("./sorted.txt", v+"\n");
             }
