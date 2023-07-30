@@ -1,7 +1,5 @@
-const fs = require("fs");
-const lineByLine = require('n-readlines');
-
-const CHUNK_SIZE = process.env.CHUNK_SIZE || 5;
+import fs from "fs";
+import lineByLine from "n-readlines";
 
 function writeChunk(chunkIndex, lines) {
     fs.writeFileSync(`./chunks/chunk${chunkIndex}.txt`, lines.sort().join("\n").trim());
@@ -33,8 +31,8 @@ function getChunks(to_sort, chunkSize) {
     return chunks;
 }
 
-function sortLargeFile(file_path) {
-    let chunks = getChunks(file_path, CHUNK_SIZE);
+function sortLargeFile(file_path, chunk_size) {
+    let chunks = getChunks(file_path, chunk_size);
     fs.writeFileSync("./sorted.txt", "");
 
     while(chunks.length > 1) {
@@ -76,9 +74,12 @@ function sortLargeFile(file_path) {
 
     chunks.forEach(ch => {
         let reader = new lineByLine(`./chunks/chunk${ch.chunk}.txt`);
+        let val;
         while(val = reader.next()) {
-            let v = val.toString().trim();
+            let v = val.toString();
             fs.appendFileSync("./sorted.txt", v+"\n");
         }
     });
 }
+
+export { sortLargeFile };
