@@ -14,12 +14,13 @@ function getChunks(to_sort, chunkSize) {
 
     let rs;
     while(rs = liner.next()) {
+        let v = rs.toString().trim();
         if(lines.length < chunkSize) {
-            lines.push(rs.toString().trim());
+            lines.push(v);
         } else {
             writeChunk(++chunkCounter, lines);
             chunks.push({value: lines[0], chunk: chunkCounter});
-            lines = [rs.toString()];
+            lines = [v];
         }
     }   
 
@@ -41,8 +42,6 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
 
     let queue = [];
 
-    let counter = 0;
-
     while(chunks.length > 1) {
         chunks.sort((a, b) => a.value < b.value ? -1 : 1);
 
@@ -55,30 +54,15 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
             reader.next();
         }
         let val;
-
         let exhausted = true;
-
         queue.push(smallest.value);
         
         while(val = reader.next()) {
             let v = val.toString().trim();
-            console.log(++counter, v <= next.value);
-            console.log( `___${v}___`);
-            console.log(`___${next.value}___`);
-            console.log("###");
             if(v <= next.value) {
-                // fs.appendFileSync("./sorted.txt", v+"\n");
                 queue.push(v);
             }
             else {
-                // let lines = [v];
-                // while(val = reader.next()) {
-                //     lines.push(val);
-                // }
-                // if(lines.length > 0)
-                //     writeChunk(smallest.chunk, lines);
-                // queue.push(v);
-
                 chunks.push({value: v, chunk: smallest.chunk, rest: reader});
                 chunks.push(next);
                 exhausted = false;
@@ -87,7 +71,6 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
         }
 
         if(exhausted) {
-            // writeChunk(smallest.chunk, []);
             chunks.push(next);
         }
 
@@ -96,11 +79,7 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
             fs.appendFileSync("./sorted.txt", queue.join("\n")+"\n");
             queue = [];
         }
-
-        // console.log(queue.length, process.memoryUsage().heapUsed / 1024 / 1024);
     }
-
-    
 
     chunks.forEach(ch => {
         let reader = ch.rest || new lineByLine(`./chunks/chunk${ch.chunk}.txt`);
@@ -109,7 +88,6 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
         while(val = reader.next()) {
             queue.push(val.toString().trim());
         }
-        // fs.appendFileSync("./sorted.txt", queue.join("\n")+"\n");
     });
 
     queue.sort((a, b) => a.value < b.value ? -1 : 1);
