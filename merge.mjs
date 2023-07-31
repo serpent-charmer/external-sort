@@ -75,7 +75,6 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
         }
 
         if(queue.length > queue_size) {
-            queue.sort((a, b) => a.value < b.value ? -1 : 1);
             fs.appendFileSync("./sorted.txt", queue.join("\n")+"\n");
             queue = [];
         }
@@ -90,7 +89,6 @@ function sortLargeFile(file_path, chunk_size, queue_size) {
         }
     });
 
-    queue.sort((a, b) => a.value < b.value ? -1 : 1);
     fs.appendFileSync("./sorted.txt", queue.join("\n"));
 }
 
